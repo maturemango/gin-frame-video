@@ -1,0 +1,16 @@
+[mysql]
+host = "127.0.0.1:3306"
+database = "gin"
+username = "root"
+password = "123456"
+debug = true
+showsql = true
+
+[redis]
+addr = "127.0.0.1:6379"
+username = ""
+password = ""
+poolsize = 300
+
+[job]
+captionstore = true
