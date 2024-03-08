@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"gin-frame/build/conn"
+	"gin-frame/build/utils"
 	"gin-frame/webapi/handlers"
 	"gin-frame/webapi/service/caption"
 	"gin-frame/webapi/service/controls"
@@ -106,7 +107,7 @@ func verifyPermission() gin.HandlerFunc {
 		act := c.Request.Method
 
 		if strings.Contains(obj, "manageSystem") {
-			e, err := casbin.NewEnforcer("./bin/model.conf", "./bin/policy.csv")
+			e, err := casbin.NewEnforcer(utils.Config.Casbin.ModelPath, utils.Config.Casbin.PolicyPath)
 			if err != nil {
 				log.Printf("failed to create enforcer: %s\n", err)
 			}

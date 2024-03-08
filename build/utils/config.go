@@ -35,6 +35,10 @@ var Config struct {
 	Video struct {
 		No    string
 	}
+	Casbin struct {
+		ModelPath    string
+		PolicyPath   string
+	}
 }
 
 func InitConfig() error {
