@@ -1,4 +1,4 @@
-package sysLog
+package log
 
 import (
 	"gin-frame/build/conn"
