@@ -10,6 +10,7 @@ type LoginMessage struct {
 type RegisterData struct {
 	Account  string `json:"account" xorm:"account"`
 	Password string `json:"password" xorm:"password"`
+	RoleId   int    `json:"-" xorm:"role_id"`
 }
 
 func (rd RegisterData) TableName() string { return "gf_user" }

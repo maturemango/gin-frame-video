@@ -20,6 +20,7 @@ func UserRegister(c *gin.Context) {
 		service.Svc.Fail(c, 400, err)
 		return
 	}
+	r.RoleId = model.User
 	if _, err := conn.GetEngine().InsertOne(&r); err != nil {
 		service.Svc.Fail(c, 400, err)
 		return

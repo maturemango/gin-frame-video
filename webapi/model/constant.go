@@ -52,3 +52,10 @@ const (
 	Warn    LogLevel = "WARN"
 	Error   LogLevel = "ERROR"
 )
+
+// 角色id
+const (
+	SuperUser = iota + 1   // 超管角色id
+	Admin                  // 管理员角色id
+	User                   // 普通用户角色id
+)
