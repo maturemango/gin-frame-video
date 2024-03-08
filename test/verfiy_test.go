@@ -21,11 +21,12 @@ func TestCreateToken(t *testing.T) {
 	// viper.SetDefault("mysql.username", "root")
 	// viper.SetDefault("mysql.password", "123456")
 
-	// 19443502652
-	// 17606162963
+	// 19443502652 role_id:1
+	// 17606162963 role_id:2
+	// 17852369877 role_id:3
 	
 	var usr model.UserInfo
-	if _, err := conn.GetEngine().Where("account = ?", "17606162963").Get(&usr); err != nil {
+	if _, err := conn.GetEngine().Where("account = ?", "17852369877").Get(&usr); err != nil {
 		t.Logf("mysql err: %s", err)
 	}
 	token, err := handlers.CreateToken(usr)
