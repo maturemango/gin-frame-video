@@ -7,7 +7,7 @@ import (
 	"gin-frame/webapi/handlers"
 	"gin-frame/webapi/service/caption"
 	"gin-frame/webapi/service/controls"
-	sysLog "gin-frame/webapi/service/log"
+	sysLog "gin-frame/webapi/manage/log"
 	"gin-frame/webapi/service/user"
 	"log"
 	"strings"

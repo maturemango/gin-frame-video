@@ -5,7 +5,6 @@ import (
 	"gin-frame/build/conn"
 	"gin-frame/webapi/handlers"
 	"gin-frame/webapi/model"
-	"gin-frame/webapi/service"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -15,30 +14,30 @@ func UpadteAccountName(c *gin.Context) {
 	var usr model.UserInfo
 	var cols []string
 	if err := c.BindJSON(&usr); err != nil {
-		service.Svc.Fail(c, 400, err)
+		handlers.Base.Fail(c, 400, err)
 		return
 	}
 
 	if len(usr.UserName) <= 0 {
-		service.Svc.Fail(c, 400, fmt.Errorf("username not null"))
+		handlers.Base.Fail(c, 400, fmt.Errorf("username not null"))
 		return
 	} else {
 		cols = append(cols, "user_name")
 	}
 	i, err := VerfiyAccountName(usr.UserName)
 	if err != nil {
-		service.Svc.Fail(c, 500, fmt.Errorf("service error"))
+		handlers.Base.Fail(c, 500, fmt.Errorf("service error"))
 		return
 	} else if i == 0 {
 		usr.UpdatedTime = time.Now()
 		cols = append(cols, "updated_time")
 	}
 	if _, err := conn.GetEngine().Where("id = ?", handlers.Identity()).Cols(cols...).Update(&usr); err != nil {
-		service.Svc.Fail(c, 500, fmt.Errorf("service error"))
+		handlers.Base.Fail(c, 500, fmt.Errorf("service error"))
 		return
 	}
-	
-	service.Svc.OK(c, "update name success")
+
+	handlers.Base.OK(c, "update name success")
 }
 
 // 验证修改的用户名是否有变化

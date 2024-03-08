@@ -6,7 +6,6 @@ import (
 	"gin-frame/build/conn"
 	"gin-frame/webapi/handlers"
 	"gin-frame/webapi/model"
-	"gin-frame/webapi/service"
 	"log"
 	"sync"
 	"time"
@@ -18,14 +17,14 @@ import (
 func InputWord(c *gin.Context) {
 	var caption model.VideoInput
 	if err := c.BindJSON(&caption); err != nil {
-		service.Svc.Fail(c, 400, err)
+		handlers.Base.Fail(c, 400, err)
 		return
 	}
 	s := time.Now()
 	sec := s.UnixNano()
 	byt, err := cacheData(caption, handlers.Identity(), s)
 	if err != nil {
-		service.Svc.Fail(c, 500, err)
+		handlers.Base.Fail(c, 500, err)
 		return
 	}
 
@@ -37,19 +36,19 @@ func InputWord(c *gin.Context) {
 		err := conn.Set(fmt.Sprintf(model.VideoInputTimeKey, caption.VideoNo, caption.Sec, fmt.Sprint(handlers.Identity()), sec),
 			fmt.Sprintf(model.VideoInputKey, caption.VideoNo, caption.Sec, fmt.Sprint(handlers.Identity()), sec), 60*time.Second)
 		if err != nil {
-			service.Svc.Fail(c, 500, err)
+			handlers.Base.Fail(c, 500, err)
 			return
 		}
 		err = conn.Set(fmt.Sprintf(model.VideoInputKey, caption.VideoNo, caption.Sec, fmt.Sprint(handlers.Identity()), sec),
 			byt, 60*time.Second)
 		if err != nil {
-			service.Svc.Fail(c, 500, err)
+			handlers.Base.Fail(c, 500, err)
 			return
 		}
 	}()
 
 	wg.Wait()
-	service.Svc.OK(c, nil)
+	handlers.Base.OK(c, nil)
 }
 
 func cacheData(caption model.VideoInput, id int64, sec time.Time) ([]byte, error) {
@@ -79,7 +78,7 @@ func GetInputWord(c *gin.Context) {
 	for {
 		key, cursor, err := conn.Scan(cursor, fmt.Sprintf(model.GetUserVideoInputKey, "1", fmt.Sprint(handlers.Identity()))+"*", 0)
 		if err != nil {
-			service.Svc.Fail(c, 500, err)
+			handlers.Base.Fail(c, 500, err)
 			return
 		}
 		n := len(key)
@@ -88,7 +87,7 @@ func GetInputWord(c *gin.Context) {
 			data[i].Key = k
 			data[i].Caption, err = conn.Get(k)
 			if err != nil {
-				service.Svc.Fail(c, 500, err)
+				handlers.Base.Fail(c, 500, err)
 				return
 			}
 		}
@@ -97,7 +96,7 @@ func GetInputWord(c *gin.Context) {
 			break
 		}
 	}
-	service.Svc.OK(c, data)
+	handlers.Base.OK(c, data)
 }
 
 type nodeData struct {
@@ -109,25 +108,25 @@ func GetNodeInputData(c *gin.Context) {
 	var condition model.NodeInputData
 	var data []nodeData
 	if err := c.BindJSON(&condition); err != nil {
-		service.Svc.Fail(c, 400, err)
+		handlers.Base.Fail(c, 400, err)
 		return
 	}
 
 	var keyss []string
 	keyss, err := GetCacheData(condition)
 	if err != nil {
-		service.Svc.Fail(c, 500, err)
+		handlers.Base.Fail(c, 500, err)
 		return
 	}
 	// var err error
 	n := len(keyss)
 	data = make([]nodeData, n)
 	if n <= 0 {
-		service.Svc.OK(c, "no barrage")
+		handlers.Base.OK(c, "no barrage")
 		return
 	}
 	// if strs, err := conn.MGet(keyss); err != nil {
-	// 	service.Svc.Fail(c, 500, fmt.Errorf("mget err:%v", err))
+	// 	handlers.Base.Fail(c, 500, fmt.Errorf("mget err:%v", err))
 	// 	return
 	// } else {
 	// 	for i, s := range strs {
@@ -141,46 +140,46 @@ func GetNodeInputData(c *gin.Context) {
 	for i, k := range keyss {
 		str, err := conn.Get(k)
 		if err != nil {
-			service.Svc.Fail(c, 500, fmt.Errorf("get error:%v", err))
+			handlers.Base.Fail(c, 500, fmt.Errorf("get error:%v", err))
 			return
 		}
 		if err := json.Unmarshal([]byte(str), &data[i]); err != nil {
-			service.Svc.Fail(c, 500, fmt.Errorf("unmarshal error:%v", err))
+			handlers.Base.Fail(c, 500, fmt.Errorf("unmarshal error:%v", err))
 			return
 		}
 	}
 
-	service.Svc.OK(c, data)
+	handlers.Base.OK(c, data)
 }
 
 // 测试用接口,不做api使用
 func SaveCacheInputData(c *gin.Context) {
 	var condition model.NodeInputData
 	if err := c.BindJSON(&condition); err != nil {
-		service.Svc.Fail(c, 400, err)
+		handlers.Base.Fail(c, 400, err)
 		return
 	}
 
 	var keyss []string
 	keyss, err := GetCacheData(condition)
 	if err != nil {
-		service.Svc.Fail(c, 500, err)
+		handlers.Base.Fail(c, 500, err)
 		return
 	}
 	n := len(keyss)
 	data := make([]model.CacheVideoInput, n)
 	if n <= 0 {
-		service.Svc.OK(c, "no barrage")
+		handlers.Base.OK(c, "no barrage")
 		return
 	}
 	for i, k := range keyss {
 		str, err := conn.Get(k)
 		if err != nil {
-			service.Svc.Fail(c, 500, fmt.Errorf("get error:%v", err))
+			handlers.Base.Fail(c, 500, fmt.Errorf("get error:%v", err))
 			return
 		}
 		if err := json.Unmarshal([]byte(str), &data[i]); err != nil {
-			service.Svc.Fail(c, 500, fmt.Errorf("unmarshal error:%v", err))
+			handlers.Base.Fail(c, 500, fmt.Errorf("unmarshal error:%v", err))
 			return
 		}
 		if _, err := conn.GetEngine().Insert(&data[i]); err != nil {
@@ -189,7 +188,7 @@ func SaveCacheInputData(c *gin.Context) {
 		}
 	}
 
-	service.Svc.OK(c, "data save success")
+	handlers.Base.OK(c, "data save success")
 }
 
 func GetCacheData(condition model.NodeInputData) ([]string, error) {

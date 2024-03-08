@@ -2,7 +2,19 @@ package handlers
 
 import "github.com/gin-gonic/gin"
 
+var Base *BaseHandler
+
+func init() {
+	Base = NewBaseHandler()
+}
+
 type BaseHandler struct {
+}
+
+func NewBaseHandler() *BaseHandler {
+	return &BaseHandler{
+
+	}
 }
 
 type reply struct {

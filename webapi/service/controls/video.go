@@ -5,8 +5,7 @@ import (
 	"gin-frame/build/conn"
 	"gin-frame/webapi/handlers"
 	"gin-frame/webapi/model"
-	"gin-frame/webapi/service"
-	_"log"
+	_ "log"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -16,12 +15,12 @@ import (
 func WatchAndCountVideo(c *gin.Context) {
 	var data model.UserWatchCountVideo
 	if err := c.BindJSON(&data); err != nil {
-		service.Svc.Fail(c, 400, err)
+		handlers.Base.Fail(c, 400, err)
 		return
 	}
 
 	var (
-		wg sync.WaitGroup
+		wg  sync.WaitGroup
 		utc model.UserTripletControls
 	)
 	wg.Add(1)
@@ -30,7 +29,7 @@ func WatchAndCountVideo(c *gin.Context) {
 		if data.Duration >= 180 {
 			if ok, err := conn.GetEngine().SQL(model.QueryTripletSQL, data.VideoNo, handlers.Identity()).Get(&utc); err != nil {
 				// log.Printf("WatchAndCountVideo:query user[%v] triplet data failed:%v\n", handlers.Identity(), err)
-				service.Svc.Fail(c, 500, fmt.Errorf("query data failed:%v", err))
+				handlers.Base.Fail(c, 500, fmt.Errorf("query data failed:%v", err))
 				return
 			} else if ok {
 				if utc.IsWatch == 1 {
@@ -38,10 +37,10 @@ func WatchAndCountVideo(c *gin.Context) {
 				}
 				utc.IsWatch = 1
 				if _, err := conn.GetEngine().Cols("is_watch").Where("video_no = ? and user_id = ?", data.VideoNo, handlers.Identity()).Update(&utc); err != nil {
-					service.Svc.Fail(c, 500, fmt.Errorf("update data failed:%v", err))
+					handlers.Base.Fail(c, 500, fmt.Errorf("update data failed:%v", err))
 					return
 				}
-				// service.Svc.OK(c, "")
+				// handlers.Base.OK(c, "")
 				return
 			} else if !ok {
 				utc = model.UserTripletControls{}
@@ -49,10 +48,10 @@ func WatchAndCountVideo(c *gin.Context) {
 				utc.UserId = handlers.Identity()
 				utc.IsWatch = 1
 				if _, err := conn.GetEngine().Insert(&utc); err != nil {
-					service.Svc.Fail(c, 500, fmt.Errorf("insert data failed:%v", err))
+					handlers.Base.Fail(c, 500, fmt.Errorf("insert data failed:%v", err))
 					return
 				} else {
-					// service.Svc.OK(c, "")
+					// handlers.Base.OK(c, "")
 					return
 				}
 			}
@@ -67,7 +66,7 @@ func WatchAndCountVideo(c *gin.Context) {
 func VideoTripletControl(c *gin.Context) {
 	var data model.VideoTriplet
 	if err := c.BindJSON(&data); err != nil {
-		service.Svc.Fail(c, 400, err)
+		handlers.Base.Fail(c, 400, err)
 		return
 	}
 
@@ -85,7 +84,7 @@ func VideoTripletControl(c *gin.Context) {
 	case 4:
 		goVideo(c, wg, data, data.Type)
 	default:
-		service.Svc.Fail(c, 400, fmt.Errorf("controls invalid"))
+		handlers.Base.Fail(c, 400, fmt.Errorf("controls invalid"))
 		return
 	}
 	wg.Wait()
@@ -96,10 +95,10 @@ func goVideo(c *gin.Context, wg *sync.WaitGroup, data model.VideoTriplet, typ in
 	go func() {
 		defer wg.Done()
 		if err := videoControlsFunc(data, typ); err != nil {
-			service.Svc.Fail(c, 500, err)
+			handlers.Base.Fail(c, 500, err)
 			return
 		} else {
-			service.Svc.OK(c, "controls success")
+			handlers.Base.OK(c, "controls success")
 			return
 		}
 	}()
