@@ -8,6 +8,7 @@ import (
 	"gin-frame/webapi/service/caption"
 	"gin-frame/webapi/service/controls"
 	sysLog "gin-frame/webapi/manage/log"
+	"gin-frame/webapi/manage/role"
 	"gin-frame/webapi/service/user"
 	"log"
 	"strings"
@@ -52,6 +53,7 @@ func addRouter(g *gin.Engine) {
 	{
 		r.POST("/login", user.UserLogin)                      // 用户登录
 		r.POST("/register", user.UserRegister)                // 用户注册
+		r.POST("/loginCode", user.GetLoginCode)               // 登录验证码(6位数)
 		r.POST("/update/username", user.UpadteAccountName)    // 用户修改昵称
 		r.POST("/upload/video", user.UploadUserVideo)         // 用户上传视频
 		r.POST("/manage/videoList", user.GetUserVideoList)    // 获取用户视频列表
@@ -74,10 +76,16 @@ func addRouter(g *gin.Engine) {
 
 func manageRouter(g *gin.RouterGroup) {
 	logRouter(g.Group("/log"))
+	roleRouter(g.Group("/role"))
 }
 
 func logRouter(g *gin.RouterGroup) {
-	g.POST("/list", sysLog.GetLogList)
+	g.POST("/list", sysLog.GetLogList)  // 获取日志列表
+}
+
+func roleRouter(g *gin.RouterGroup) {
+	g.POST("/list", role.GetRoleList)  // 获取角色列表
+	g.POST("/update/status", role.UpdateRoleStatus)  // 修改角色状态
 }
 
 func verifyToken() gin.HandlerFunc {
@@ -94,13 +102,23 @@ func verifyToken() gin.HandlerFunc {
 	}
 }
 
+type roleData struct {
+	Sub      int    `xorm:"role_id"`
+	Status   int    `xorm:"status"`
+}
+
 func verifyPermission() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var sub int
-		sql := `select role_id from gf_user where id = ?`
-		if _, err := conn.GetEngine().SQL(sql, handlers.Identity()).Get(&sub); err != nil {
+		var data roleData
+		sql := `select gu.role_id, gr.status from 
+		gf_user gu inner join gf_role gr on gu.role_id = gr.id 
+		where gu.id = ?`
+		if _, err := conn.GetEngine().SQL(sql, handlers.Identity()).Get(&data); err != nil {
 			log.Printf("get user info failed: %s\n", err)
 			c.JSON(403, "get user info failed")
+			c.Abort()
+		} else if data.Status != 1 {
+			c.JSON(403, "role disable")
 			c.Abort()
 		}
 		obj := c.Request.URL.Path
@@ -111,7 +129,7 @@ func verifyPermission() gin.HandlerFunc {
 			if err != nil {
 				log.Printf("failed to create enforcer: %s\n", err)
 			}
-			if ok, err := e.Enforce(fmt.Sprintf("%d",sub), obj, act); err != nil {
+			if ok, err := e.Enforce(fmt.Sprintf("%d", data.Sub), obj, act); err != nil {
 				log.Printf("enforce failed: %s\n", err)
 				c.JSON(403, "auth failed")
 				c.Abort()
