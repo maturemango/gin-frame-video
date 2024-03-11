@@ -29,7 +29,7 @@ func UserRegister(c *gin.Context) {
 }
 
 func verfiyRegisterData(d model.RegisterData) error {
-	if len(d.Account) <= 0 || len(d.Password) <= 0 {
+	if len(d.Phone) <= 0 || len(d.Password) <= 0 {
 		return fmt.Errorf("account or password not null")
 	}
 	return nil

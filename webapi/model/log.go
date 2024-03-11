@@ -14,7 +14,7 @@ type OperateLog struct {
 func (ol OperateLog) TableName() string { return "gf_log" }
 
 type LogList struct {
-	Acoount       string    `json:"account" xorm:"account"`
+	Account       string    `json:"phone" xorm:"phone"`
 	Addr          string    `json:"addr" xorm:"addr"`
 	LogLevel      string    `json:"logLevel" xorm:"log_level"`
 	OperateTime   string    `json:"operateTime" xorm:"operate_time"`

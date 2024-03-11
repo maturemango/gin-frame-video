@@ -3,14 +3,15 @@ package model
 import "time"
 
 type LoginMessage struct {
-	Account  string `json:"account" xorm:"account"`
-	Password string `json:"password" xorm:"password"`
+	Phone      string   `json:"phone" xorm:"phone"`
+	Password   string   `json:"password" xorm:"password"`
+	Code       string   `json:"code" xorm:"-"`
 }
 
 type RegisterData struct {
-	Account  string `json:"account" xorm:"account"`
-	Password string `json:"password" xorm:"password"`
-	RoleId   int    `json:"-" xorm:"role_id"`
+	Phone      string   `json:"phone" xorm:"phone"`
+	Password   string   `json:"password" xorm:"password"`
+	RoleId     int      `json:"-" xorm:"role_id"`
 }
 
 func (rd RegisterData) TableName() string { return "gf_user" }
@@ -21,7 +22,7 @@ type UserInfo struct {
 	UpdatedTime    time.Time    `json:"updatedTime" xorm:"updated_time"`
 	UserName       string       `json:"userName" xorm:"user_name"`
 	Password       string       `json:"password" xorm:"password"`
-	Account        string       `json:"account" xorm:"account"`
+	Phone          string       `json:"phone" xorm:"phone"`
 }
 
 func (ui UserInfo) TableName() string { return "gf_user" }

@@ -2,6 +2,7 @@ package test
 
 import (
 	"fmt"
+	"regexp"
 	"testing"
 
 	"gin-frame/build/cmd"
@@ -10,23 +11,26 @@ import (
 	"gin-frame/webapi/handlers"
 	"gin-frame/webapi/model"
 
-	_"github.com/spf13/viper"
+	_ "github.com/spf13/viper"
 )
 
-func TestCreateToken(t *testing.T) {
+func init() {
 	cmd.LoadConfig()
 	utils.InitConfig()
+}
+
+func TestCreateToken(t *testing.T) {
 	// viper.SetDefault("mysql.host", "127.0.0.1:3306")
 	// viper.SetDefault("mysql.database", "gin")
 	// viper.SetDefault("mysql.username", "root")
 	// viper.SetDefault("mysql.password", "123456")
 
-	// 19443502652 role_id:1
-	// 17606162963 role_id:2
+	// 17606162963 role_id:1
+	// 19443502652 role_id:2
 	// 17852369877 role_id:3
 	
 	var usr model.UserInfo
-	if _, err := conn.GetEngine().Where("account = ?", "17852369877").Get(&usr); err != nil {
+	if _, err := conn.GetEngine().Where("phone = ?", "17606162963").Get(&usr); err != nil {
 		t.Logf("mysql err: %s", err)
 	}
 	token, err := handlers.CreateToken(usr)
@@ -49,4 +53,15 @@ func TestVerfiyToken(t *testing.T) {
 	} else {
 		fmt.Printf("claim name is: %v\n", &claim.UserName)
 	}
+}
+
+func TestMatchPhone(t *testing.T) {
+	phone := "19345678912"
+	ok, err := regexp.MatchString("^1[3-9]\\d{9}$", phone)
+	if len(phone) != 11 || !ok || err != nil {
+		t.Fatal(fmt.Errorf("invalid phone"))
+	}
+
+	code := utils.RandomLoginCode(6)
+	fmt.Println("code:" + code)
 }
