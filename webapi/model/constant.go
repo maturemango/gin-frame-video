@@ -23,6 +23,9 @@ var GetVideoInputTimeKey string = "danmu:Video:No.%s;Node:%d;User:"
 var VideoInputKey string = "danmu:video:no.%s;node:%d;user:no.%s;time:%d" // 视频弹幕根据视频编号和用户编号以及发送的弹幕时间戳来设置键
 var GetUserVideoInputKey string = "danmu:video:no.%s;user:no.%s;time:"  // 查询用户在同一视频下的所有弹幕
 
+// 用户登录验证码缓存键
+var LoginCode string = "captcha:login:%s"
+
 // 视频操作相关
 var QueryTripletSQL = `select * from gf_video_triplet where video_no = ? and user_id = ?`
 
