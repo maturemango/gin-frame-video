@@ -18,3 +18,12 @@ func RandomVideoNo(length int) string {
 	}
 	return b.String()
 }
+
+func RandomLoginCode(length int) string {
+	chars := "0123456789"
+	var b strings.Builder
+	for i := 0; i < length; i ++ {
+		b.WriteByte(chars[rand.Intn(len(chars))])
+	}
+	return b.String()
+}
