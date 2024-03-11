@@ -48,8 +48,8 @@ func Get(k string) (string, error) {
 	return val, err
 }
 
-func Del(k string) error {
-	_, err := _cache.Del(context.Background(), k).Result()
+func Del(k ...string) error {
+	_, err := _cache.Del(context.Background(), k...).Result()
 	return err
 }
 
@@ -66,4 +66,9 @@ func MGet(keys []string) ([]interface{}, error) {
 func HGetAll(k string) (map[string]string, error) {
 	result, err := _cache.HGetAll(context.Background(), k).Result()
 	return result, err
+}
+
+func Exist(k string) bool {
+	result, _ := _cache.Exists(context.Background(), k).Result()
+	return result > 0
 }
