@@ -10,6 +10,7 @@ import (
 	sysLog "gin-frame/webapi/manage/log"
 	"gin-frame/webapi/manage/role"
 	"gin-frame/webapi/service/user"
+	mamageVer "gin-frame/webapi/manage/version"
 	"log"
 	"strings"
 	"time"
@@ -75,6 +76,7 @@ func addRouter(g *gin.Engine) {
 }
 
 func manageRouter(g *gin.RouterGroup) {
+	g.POST("/version", mamageVer.GetSystemMessage) // 获取系统的版本相关信息
 	logRouter(g.Group("/log"))
 	roleRouter(g.Group("/role"))
 }

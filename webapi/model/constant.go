@@ -62,3 +62,11 @@ const (
 	Admin                  // 管理员角色id
 	User                   // 普通用户角色id
 )
+
+// 系统版本信息
+var (
+	Version    string
+	GoVersion  string
+	GitHash    string
+	BuildTime  string
+)
