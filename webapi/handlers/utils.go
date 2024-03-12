@@ -1,6 +1,9 @@
 package handlers
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
+	"errors"
 	"gin-frame/build/conn"
 	"gin-frame/webapi/model"
 	"time"
@@ -18,4 +21,14 @@ func AddSystemLog(id int64, addr string, level model.LogLevel, desc model.UserSe
 		return err
 	}
 	return nil
+}
+
+func EncodeCrypto(code string) (string, error) {
+	p := []byte(code)
+	h := sha256.New()
+	if _, err := h.Write(p); err != nil {
+		return "", errors.New(err.Error())
+	}
+	hashed := hex.EncodeToString(h.Sum(nil))
+	return hashed, nil
 }

@@ -22,14 +22,20 @@ func UserRegister(c *gin.Context) {
 		return
 	}
 	r.RoleId = model.User
-	if _, err := conn.GetEngine().InsertOne(&r); strings.Contains(err.Error(), "gf_user.phone_role") {
+	if r.Password, err = handlers.EncodeCrypto(r.Password); err != nil {
+		handlers.Base.Fail(c, 400, err)
+		return
+	}
+	_, err = conn.GetEngine().InsertOne(&r)
+	if err == nil {
+		handlers.Base.OK(c, "register success")
+	} else if strings.Contains(err.Error(), "gf_user.phone_role") {
 		handlers.Base.Fail(c, 400, fmt.Errorf("user exist"))
 		return
 	} else if err != nil {
 		handlers.Base.Fail(c, 400, err)
 		return
 	}
-	handlers.Base.OK(c, "register success")
 }
 
 func verfiyRegisterData(d model.RegisterData) error {
