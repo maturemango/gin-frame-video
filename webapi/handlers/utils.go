@@ -32,3 +32,11 @@ func EncodeCrypto(code string) (string, error) {
 	hashed := hex.EncodeToString(h.Sum(nil))
 	return hashed, nil
 }
+
+func GetUserInfoById(id int64) (model.UserInfo, error) {
+	var usr model.UserInfo
+	if _, err := conn.GetEngine().Where("id = ?", id).Get(&usr); err != nil {
+		return usr, err
+	}
+	return usr, nil
+}

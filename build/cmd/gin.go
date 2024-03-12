@@ -56,6 +56,8 @@ func addRouter(g *gin.Engine) {
 		r.POST("/register", user.UserRegister)                // 用户注册
 		r.POST("/loginCode", user.GetLoginCode)               // 登录验证码(6位数)
 		r.POST("/update/username", user.UpadteAccountName)    // 用户修改昵称
+		r.POST("/update/psw", user.UpdateUserPsw)             // 用户修改密码
+		r.POST("/update/send", user.SendPswCode)               // 修改密码验证码
 		r.POST("/upload/video", user.UploadUserVideo)         // 用户上传视频
 		r.POST("/manage/videoList", user.GetUserVideoList)    // 获取用户视频列表
 		r.GET("/manage/videoDetail", user.GetUserVideoDetail) // 获取用户视频信息
@@ -108,6 +110,8 @@ type roleData struct {
 	Sub      int    `xorm:"role_id"`
 	Status   int    `xorm:"status"`
 }
+
+
 
 func verifyPermission() gin.HandlerFunc {
 	return func(c *gin.Context) {

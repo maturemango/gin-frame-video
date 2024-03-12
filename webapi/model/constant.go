@@ -25,6 +25,8 @@ var GetUserVideoInputKey string = "danmu:video:no.%s;user:no.%s;time:"  // 查�
 
 // 用户登录验证码缓存键
 var LoginCode string = "captcha:login:%s"
+// 用户修改密码验证码缓存键
+var ModfiyPswCode string = "captcha:password:%s"
 
 // 视频操作相关
 var QueryTripletSQL = `select * from gf_video_triplet where video_no = ? and user_id = ?`
@@ -33,10 +35,11 @@ var QueryTripletSQL = `select * from gf_video_triplet where video_no = ? and use
 type UserServiceDesc string
 
 const (
-	Login          UserServiceDesc = "用户登录"
-	UpdateData     UserServiceDesc = "修改用户信息"
-	UploadVideo    UserServiceDesc = "用户上传视频"
-	VideoManage    UserServiceDesc = "用户视频管理"
+	Login             UserServiceDesc = "用户登录"
+	UpdateUserName    UserServiceDesc = "修改用户昵称"
+	UploadVideo       UserServiceDesc = "用户上传视频"
+	VideoManage       UserServiceDesc = "用户视频管理"
+	UpdateUserPsw     UserServiceDesc = "修改用户密码"
 )
 
 // 操作详情
@@ -44,6 +47,7 @@ type OperateDetail string
 
 const (
 	LoginSuccess      OperateDetail = "登录成功"
+	UpdatePswSuccess  OperateDetail = "修改用户密码成功"
 )
 
 // 日志等级

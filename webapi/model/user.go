@@ -26,3 +26,9 @@ type UserInfo struct {
 }
 
 func (ui UserInfo) TableName() string { return "gf_user" }
+
+type UpdateLoginPsw struct {
+	OldPssword    string    `json:"oldPassword"`
+	NewPssword    string    `json:"newPassword"`
+	Code          string    `json:"code"`
+}
