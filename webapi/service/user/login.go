@@ -66,7 +66,8 @@ func verfiyUserLogin(data model.LoginMessage) (int, error) {
 	if _, err := conn.GetEngine().SQL(sql, data.Phone).Get(&pas); err != nil {
 		return 400, err
 	}
-	if pas != data.Password {
+	psw, _ := handlers.EncodeCrypto(data.Password)
+	if pas != psw {
 		return 401, fmt.Errorf("password error")
 	}
 	return 200, nil
