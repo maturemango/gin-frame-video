@@ -62,6 +62,6 @@ func TestMatchPhone(t *testing.T) {
 		t.Fatal(fmt.Errorf("invalid phone"))
 	}
 
-	code := utils.RandomLoginCode(6)
+	code := utils.RandomCode(6)
 	fmt.Println("code:" + code)
 }

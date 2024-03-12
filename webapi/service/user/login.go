@@ -42,7 +42,7 @@ func UserLogin(c *gin.Context) {
 	}
 
 	var token string
-	if info, err := getUserInfoByAccount(login.Phone); err != nil {
+	if info, err := getUserInfoByPhone(login.Phone); err != nil {
 		handlers.Base.Fail(c, 400, err)
 		return
 	} else {
@@ -72,7 +72,7 @@ func verfiyUserLogin(data model.LoginMessage) (int, error) {
 	return 200, nil
 }
 
-func getUserInfoByAccount(phone string) (model.UserInfo, error) {
+func getUserInfoByPhone(phone string) (model.UserInfo, error) {
 	var info model.UserInfo
 	sql := `select * from gf_user where phone = ? and role_id = 3`
 	if _, err := conn.GetEngine().SQL(sql, phone).Get(&info); err != nil {
@@ -102,7 +102,7 @@ func GetLoginCode(c *gin.Context) {
 		handlers.Base.Fail(c, 400, fmt.Errorf("send logincode repeat"))
 		return
 	}
-	code := utils.RandomLoginCode(6)
+	code := utils.RandomCode(6)
 	conn.Set(phoneKey, code, time.Minute * 1)
 	handlers.Base.OK(c, code)
 }
