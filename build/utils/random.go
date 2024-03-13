@@ -10,7 +10,7 @@ import (
 // 	rand.Seed(time.Now().UnixNano())
 // }
 
-func RandomVideoNo(length int) string {
+func RandomNo(length int) string {
 	chars := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 	var b strings.Builder
 	for i := 0; i < length; i ++ {

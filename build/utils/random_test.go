@@ -6,6 +6,6 @@ import (
 )
 
 func TestRandomVideoNo(t *testing.T) {
-	str := RandomVideoNo(6)
+	str := RandomNo(6)
 	fmt.Printf("rand str:%v\n", str)
 }

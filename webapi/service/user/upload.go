@@ -64,7 +64,7 @@ func verifyVideoFile(file *multipart.FileHeader) error {
 }
 
 func uploadVideoMessage(data model.UploadUserVideo) model.UploadUserVideo {
-	no := utils.Config.Video.No + fmt.Sprint(time.Now().UnixNano()) + utils.RandomVideoNo(10)
+	no := utils.Config.Video.No + fmt.Sprint(time.Now().UnixNano()) + utils.RandomNo(10)
 	data.VideoNo = no
 	data.UserId = handlers.Identity()
 	data.UploadTime = time.Now()
