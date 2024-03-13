@@ -46,8 +46,9 @@ const (
 type OperateDetail string
 
 const (
-	LoginSuccess      OperateDetail = "登录成功"
-	UpdatePswSuccess  OperateDetail = "修改用户密码成功"
+	LoginSuccess           OperateDetail = "登录成功"
+	UpdateNameSuccess      OperateDetail = "修改昵称成功"
+	UpdatePswSuccess       OperateDetail = "修改用户密码成功"
 )
 
 // 日志等级

@@ -39,7 +39,9 @@ func UpadteAccountName(c *gin.Context) {
 		handlers.Base.Fail(c, 500, fmt.Errorf("service error"))
 		return
 	}
-
+	if err := handlers.AddSystemLog(handlers.Identity(), c.ClientIP(), model.Info, model.UpdateUserName, model.UpdateNameSuccess); err != nil {
+		log.Printf("user:%v update name addlog failed:%v", handlers.Identity(), err)
+	}
 	handlers.Base.OK(c, "update name success")
 }
 
