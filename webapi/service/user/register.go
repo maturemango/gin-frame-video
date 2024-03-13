@@ -3,6 +3,7 @@ package user
 import (
 	"fmt"
 	"gin-frame/build/conn"
+	"gin-frame/build/utils"
 	"gin-frame/webapi/handlers"
 	"gin-frame/webapi/model"
 	"strings"
@@ -22,6 +23,7 @@ func UserRegister(c *gin.Context) {
 		return
 	}
 	r.RoleId = model.User
+	r.UserName = generateRandomName(r.Phone)
 	if r.Password, err = handlers.EncodeCrypto(r.Password); err != nil {
 		handlers.Base.Fail(c, 400, err)
 		return
@@ -43,4 +45,9 @@ func verfiyRegisterData(d model.RegisterData) error {
 		return fmt.Errorf("account or password not null")
 	}
 	return nil
+}
+
+func generateRandomName(phone string) (random string) {
+	random = utils.Config.Login.No + utils.RandomNo(4) + phone
+	return random
 }

@@ -9,6 +9,7 @@ type LoginMessage struct {
 }
 
 type RegisterData struct {
+	UserName   string   `json:"-" xorm:"user_name"`
 	Phone      string   `json:"phone" xorm:"phone"`
 	Password   string   `json:"password" xorm:"password"`
 	RoleId     int      `json:"-" xorm:"role_id"`

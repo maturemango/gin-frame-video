@@ -31,6 +31,7 @@ var Config struct {
 	Login struct {
 		ExprieAt  int
 		LoginKey  string
+		No        string
 	}
 	Video struct {
 		No    string
