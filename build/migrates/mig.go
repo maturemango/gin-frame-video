@@ -60,20 +60,17 @@ var migrates = []*xmigrate.Migration{
 	{
 		ID: time.Now().Format("2006-01-02 15:04:05"),
 		Migrate: func(sees *xorm.Engine) error {
-			var err error
-			var id int
 			sqlStr := ReadAllSQL()
 			for i, str := range sqlStr {
 				if strings.EqualFold(str, "") {
 					continue
 				}
-				_, err = sees.Exec(str)
+				_, err := sees.Exec(str)
 				if err != nil {
-					id = i
-					break
+					return fmt.Errorf("exec:%d failed:%v", i, err)
 				}
 			}
-			return fmt.Errorf("exec:%d failed:%v", id, err)
+			return nil
 		},
 		Rollback: func(sees *xorm.Engine) error {
 			_, err := sees.Exec(`drop table copy_user`)
