@@ -4,10 +4,12 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
+	"strings"
 	"time"
-	_ "time"
 
 	_ "github.com/go-sql-driver/mysql"
 	mig "github.com/golang-migrate/migrate/v4"
@@ -17,19 +19,61 @@ import (
 	xmigrate "xorm.io/xorm/migrate"
 )
 
+func ReadAllSQL() []string {
+	var sqlstr []string
+	sqlPath := "D:\\gopath\\gin\\gin-frame\\bin\\migrate\\doc"
+	files, err := ioutil.ReadDir(sqlPath)
+	if err != nil {
+		return sqlstr
+	}
+
+	var sqlContent [][]byte
+	for _, file := range files {
+		if filepath.Ext(file.Name()) == ".sql" {
+			content, err := ioutil.ReadFile(filepath.Join(sqlPath, file.Name()))
+			if err != nil {
+				return sqlstr
+			}
+			sqlContent = append(sqlContent, content)
+		}
+	}
+	for i, content := range sqlContent {
+		if i == 0 {
+			if strings.Contains(string(content), ";") {
+				sqlstr = strings.Split(string(content), ";")
+			} else {
+				sqlstr = append(sqlstr, string(content))
+			}
+		} else {
+			if strings.Contains(string(content), ";") {
+				str := strings.Split(string(content), ";")
+				sqlstr = append(sqlstr, str...)
+			} else {
+				sqlstr = append(sqlstr, string(content))
+			}
+		}
+	}
+	return sqlstr
+}
+
 var migrates = []*xmigrate.Migration{
 	{
 		ID: time.Now().Format("2006-01-02 15:04:05"),
 		Migrate: func(sees *xorm.Engine) error {
-			_, err := sees.Exec(`create table copy_user (
-				id bigint not null auto_increment,
-				created_time datetime not null default current_timestamp,
-				updated_time datetime not null default current_timestamp on update current_timestamp,
-				user_name varchar(50) not null comment '用户名',
-				password varchar(255) not null comment '用户密码',
-				primary key(id)
-			)`)
-			return err
+			var err error
+			var id int
+			sqlStr := ReadAllSQL()
+			for i, str := range sqlStr {
+				if strings.EqualFold(str, "") {
+					continue
+				}
+				_, err = sees.Exec(str)
+				if err != nil {
+					id = i
+					break
+				}
+			}
+			return fmt.Errorf("exec:%d failed:%v", id, err)
 		},
 		Rollback: func(sees *xorm.Engine) error {
 			_, err := sees.Exec(`drop table copy_user`)
