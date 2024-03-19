@@ -1,4 +1,4 @@
-package job
+package main
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"gin-frame/job/backend"
 
 	"github.com/spf13/cobra"
 )
@@ -16,7 +17,7 @@ var rootCmd = &cobra.Command{
 	Long: "gin-frame background job",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("job start")
-		job := &BackgroundJob{}
+		job := &backend.BackgroundJob{}
 		go gracefulShutdown(job.Stop)
 		job.Run()
 	},
