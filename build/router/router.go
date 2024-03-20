@@ -7,6 +7,7 @@ import (
 	"gin-frame/webapi/manage/role"
 	"gin-frame/webapi/service/user"
 	mamageVer "gin-frame/webapi/manage/version"
+	"gin-frame/webapi/manage/login"
 	"github.com/gin-gonic/gin"
 )
 
@@ -40,6 +41,7 @@ func AddRouter(g *gin.Engine) {
 
 func ManageRouter(g *gin.RouterGroup) {
 	g.POST("/version", mamageVer.GetSystemMessage) // 获取系统的版本相关信息
+	g.POST("/login", login.ManageSysLogin)      // 管理员登录控制台
 	logRouter(g.Group("/log"))
 	roleRouter(g.Group("/role"))
 }

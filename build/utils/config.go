@@ -40,6 +40,9 @@ var Config struct {
 		ModelPath    string
 		PolicyPath   string
 	}
+	Manage struct {
+		RoleId    int
+	}
 }
 
 func InitConfig() error {
