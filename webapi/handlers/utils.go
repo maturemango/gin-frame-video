@@ -6,6 +6,7 @@ import (
 	"errors"
 	"gin-frame/build/conn"
 	"gin-frame/webapi/model"
+	"strings"
 	"time"
 )
 
@@ -24,6 +25,9 @@ func AddSystemLog(id int64, addr string, level model.LogLevel, desc model.UserSe
 }
 
 func EncodeCrypto(code string) (string, error) {
+	if strings.EqualFold(code, "") {
+		return "", errors.New("code not null")
+	}
 	p := []byte(code)
 	h := sha256.New()
 	if _, err := h.Write(p); err != nil {
