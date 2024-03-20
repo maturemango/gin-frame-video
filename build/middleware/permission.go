@@ -19,6 +19,10 @@ type roleData struct {
 
 func VerifyPermission() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		method := c.Request.URL.Path
+		if strings.Contains(method, "/login") {
+			return
+		}
 		var data roleData
 		sql := `select gu.role_id, gr.status from 
 		gf_user gu inner join gf_role gr on gu.role_id = gr.id 

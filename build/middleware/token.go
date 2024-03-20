@@ -3,12 +3,17 @@ package middleware
 import (
 	"gin-frame/webapi/handlers"
 	"log"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 func VerifyToken() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		method := c.Request.URL.Path
+		if strings.Contains(method, "/login") {
+			return
+		}
 		token := c.Request.Header.Get("token")
 		claim, err := handlers.VerfiyToken(token)
 		if err != nil {
