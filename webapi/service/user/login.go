@@ -62,7 +62,7 @@ func UserLogin(c *gin.Context) {
 
 func verfiyUserLogin(data model.LoginMessage) (int, error) {
 	var pas string
-	sql := `select password from gf_user where phone = ?`
+	sql := `select password from gf_user where phone = ? and role_id = 3`
 	if _, err := conn.GetEngine().SQL(sql, data.Phone).Get(&pas); err != nil {
 		return 400, err
 	}
