@@ -11,7 +11,7 @@ import (
 func VerifyToken() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		method := c.Request.URL.Path
-		if strings.Contains(method, "/login") {
+		if strings.Contains(method, "/login") || strings.Contains(method, "/register") {
 			return
 		}
 		token := c.Request.Header.Get("token")
