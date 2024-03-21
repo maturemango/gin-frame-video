@@ -41,7 +41,10 @@ var Config struct {
 		PolicyPath   string
 	}
 	Manage struct {
-		RoleId    int
+		RoleId      int
+		CodeLength  int
+		Bucket      int
+		TimeLimit   int
 	}
 }
 

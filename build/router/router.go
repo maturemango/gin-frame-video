@@ -41,7 +41,7 @@ func AddRouter(g *gin.Engine) {
 
 func ManageRouter(g *gin.RouterGroup) {
 	g.POST("/version", mamageVer.GetSystemMessage) // 获取系统的版本相关信息
-	g.POST("/login", login.ManageSysLogin)      // 管理员登录控制台
+	loginRouter(g)
 	logRouter(g.Group("/log"))
 	roleRouter(g.Group("/role"))
 }
@@ -53,4 +53,9 @@ func logRouter(g *gin.RouterGroup) {
 func roleRouter(g *gin.RouterGroup) {
 	g.POST("/list", role.GetRoleList)               // 获取角色列表
 	g.POST("/update/status", role.UpdateRoleStatus) // 修改角色状态
+}
+
+func loginRouter(g *gin.RouterGroup) {
+	g.POST("/login", login.ManageSysLogin)      // 管理员登录控制台
+	g.POST("login/captcha", login.SysLoginCode)    // 控制台登录验证码
 }

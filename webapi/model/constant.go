@@ -1,5 +1,7 @@
 package model
 
+import "embed"
+
 // 密钥格式要对
 const PubKey = `-----BEGIN PUBLIC KEY-----
 MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAN/XLyUx1DwoWE3QgtJr7vYGk0mN0XsQ
@@ -27,6 +29,8 @@ var GetUserVideoInputKey string = "danmu:video:no.%s;user:no.%s;time:"  // 查�
 var LoginCode string = "captcha:login:%s"
 // 用户修改密码验证码缓存键
 var ModfiyPswCode string = "captcha:password:%s"
+// 管理系统用户登录验证码缓存键
+var SysLoginCode string = "captcha:sysLogin:%s"
 
 // 视频操作相关
 var QueryTripletSQL = `select * from gf_video_triplet where video_no = ? and user_id = ?`
@@ -75,3 +79,9 @@ var (
 	GitHash    string
 	BuildTime  string
 )
+
+// 字符集
+var Characters string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+
+//go:embed fonts/*.ttf
+var FontFS embed.FS
