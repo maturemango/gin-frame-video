@@ -17,7 +17,7 @@ import (
 var (
 	store = base64Captcha.DefaultMemStore
 	captchaid string
-	mu sync.Mutex
+	mu sync.RWMutex
 	requests = make(map[string]*requestInfo)
 )
 
