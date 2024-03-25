@@ -57,5 +57,7 @@ func roleRouter(g *gin.RouterGroup) {
 
 func loginRouter(g *gin.RouterGroup) {
 	g.POST("/login", login.ManageSysLogin)      // 管理员登录控制台
-	g.POST("login/captcha", login.SysLoginCode)    // 控制台登录验证码
+	g.POST("/login/captcha", login.SysLoginCode)    // 控制台登录验证码（锁+map）
+	// g.POST("/login/captcha1", login.SysLoginCode1)  // 控制台登录验证码（sync.Map）
+	g.POST("/loginOut", login.SysLoginOut)  // 控制台登出清除一些必要数据
 }

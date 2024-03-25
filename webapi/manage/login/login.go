@@ -15,10 +15,13 @@ import (
 )
 
 var (
-	store = base64Captcha.DefaultMemStore
+	store     = base64Captcha.DefaultMemStore
 	captchaid string
-	mu sync.RWMutex
+	// 锁+map类型可以实现并发操作
+	mu       sync.RWMutex
 	requests = make(map[string]*requestInfo)
+	// sync.Map可以在读删操作频繁的情况下更好的实现并发安全操作
+	requestMap = &sync.Map{}
 )
 
 func ManageSysLogin(c *gin.Context) {
@@ -77,8 +80,8 @@ func SysLoginCode(c *gin.Context) {
 	info, exist := requests[ip]
 	if !exist || time.Since(info.fristRequest) > time.Duration(utils.Config.Manage.TimeLimit)*time.Minute {
 		info = &requestInfo{
-			count:          1,
-			fristRequest:   time.Now(),
+			count:        1,
+			fristRequest: time.Now(),
 		}
 		requests[ip] = info
 	} else {
@@ -88,7 +91,7 @@ func SysLoginCode(c *gin.Context) {
 			return
 		}
 	}
-	captcha := base64Captcha.NewCaptcha(base64Captcha.NewDriverString(60, 200, 2, 5, utils.Config.Manage.CodeLength, model.Characters, &color.RGBA{0, 0, 0, 0}, 
+	captcha := base64Captcha.NewCaptcha(base64Captcha.NewDriverString(60, 200, 2, 5, utils.Config.Manage.CodeLength, model.Characters, &color.RGBA{0, 0, 0, 0},
 		base64Captcha.NewEmbeddedFontsStorage(model.FontFS), []string{"simhei.ttf"}), store)
 	id, b64s, answer, err := captcha.Generate()
 	if err != nil {
@@ -101,4 +104,39 @@ func SysLoginCode(c *gin.Context) {
 	resp.B64s = b64s
 	resp.Answer = answer
 	handlers.Base.OK(c, resp)
+}
+
+func SysLoginCode1(c *gin.Context) {
+	// var request requestInfo
+	ip := c.ClientIP()
+	value, ok := requestMap.Load(ip)
+	r, b := value.(*requestInfo)
+	if !ok || time.Since(r.fristRequest) > time.Duration(utils.Config.Manage.TimeLimit)*time.Minute || !b {
+		requestMap.Store(ip, &requestInfo{
+			count:        1,
+			fristRequest: time.Now(),
+		})
+	} else {
+		r.count++
+		if r.count > utils.Config.Manage.Bucket {
+			handlers.Base.Fail(c, 429, fmt.Errorf("refresh too many"))
+			return
+		}
+	}
+	handlers.Base.OK(c, "success")
+}
+
+func SysLoginOut(c *gin.Context) {
+	mu.Lock()
+	defer mu.Unlock()
+
+	ip := c.ClientIP()
+	delete(requests, ip)
+	handlers.Base.OK(c, "delete success")
+}
+
+func SysLoginOut1(c *gin.Context) {
+	ip := c.ClientIP()
+	requestMap.Delete(ip)
+	handlers.Base.OK(c, "delete success")
 }
